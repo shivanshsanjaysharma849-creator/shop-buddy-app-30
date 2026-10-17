@@ -1,3 +1,5 @@
+// ============= Full file contents =============
+
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ShoppingBag, X, Plus, Minus, Pencil, Trash2, Store, LayoutGrid } from "lucide-react";
@@ -44,6 +46,7 @@ function useStored<T>(key: string, init: T) {
 
 const money = (n: number) => `$${n.toFixed(2)}`;
 const status = (s: number) => (s === 0 ? "Out of stock" : s < 5 ? "Low stock" : "In stock");
+const stockLine = (s: number) => (s === 0 ? "Sold out" : s < 5 ? `Only ${s} left` : `${s} in stock`);
 
 function App() {
   const [products, setProducts] = useStored<Product[]>("se-products", SEED);
@@ -71,57 +74,68 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <span className="font-display text-2xl">ShopEasy</span>
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 md:px-10">
+          <span className="font-display text-2xl tracking-tight">ShopEasy</span>
           <nav className="flex items-center gap-1 rounded-full bg-muted p-1 text-sm">
             {(["shop", "admin"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex items-center gap-1.5 rounded-full px-4 py-1.5 transition ${tab === t ? "bg-card shadow-sm" : "text-muted-foreground"}`}>
+                className={`flex items-center gap-2 rounded-full px-5 py-2 transition ${tab === t ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
                 {t === "shop" ? <Store size={15} /> : <LayoutGrid size={15} />}{t === "shop" ? "Shop" : "Admin"}
               </button>
             ))}
           </nav>
-          <button onClick={() => setOpen(true)} className="relative rounded-full p-2 hover:bg-muted" aria-label="Open cart">
+          <button onClick={() => setOpen(true)} className="relative rounded-full p-2.5 transition hover:bg-muted" aria-label="Open cart">
             <ShoppingBag size={22} />
-            {count > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-5 w-5 place-items-center rounded-full bg-primary text-[11px] text-primary-foreground">{count}</span>}
+            {count > 0 && <span className="absolute -right-1 -top-1 grid h-5 w-5 place-items-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">{count}</span>}
           </button>
         </div>
       </header>
 
-      {msg && <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-5 py-2 text-sm text-background">{msg}</div>}
+      {msg && <div className="fixed bottom-10 left-1/2 z-50 -translate-x-1/2 rounded-full bg-foreground px-7 py-3 text-sm text-background">{msg}</div>}
 
       {tab === "shop" ? (
         <main>
           <section className="relative">
-            <img src={hero} alt="Curated everyday goods" width={1600} height={912} className="h-[60vh] w-full object-cover" />
-            <div className="absolute inset-0 flex items-center bg-gradient-to-r from-foreground/50 to-transparent">
-              <div className="mx-auto w-full max-w-6xl px-5 text-background">
-                <p className="text-sm uppercase tracking-[0.2em]">New season</p>
-                <h1 className="mt-2 max-w-lg font-display text-5xl leading-tight md:text-6xl">Everyday goods, made simple.</h1>
-                <a href="#products" className="mt-6 inline-block rounded-full bg-background px-6 py-3 text-sm font-medium text-foreground">Shop the collection</a>
+            <img src={hero} alt="Curated everyday goods" width={1600} height={912} className="h-[78vh] min-h-[520px] w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 via-foreground/25 to-transparent" />
+            <div className="absolute inset-0 flex items-center">
+              <div className="mx-auto w-full max-w-6xl px-6 md:px-10">
+                <div className="max-w-xl text-background">
+                  <p className="text-xs uppercase tracking-[0.32em] opacity-80">New season</p>
+                  <h1 className="mt-7 font-display text-5xl leading-[1.06] md:text-7xl">Everyday goods, made simple.</h1>
+                  <p className="mt-7 max-w-md text-lg leading-relaxed opacity-85">A small collection with room to look around. Take your time.</p>
+                  <a href="#products" className="mt-11 inline-block rounded-full bg-background px-8 py-4 text-sm font-medium text-foreground transition hover:bg-secondary">Shop the collection</a>
+                </div>
               </div>
             </div>
           </section>
-          <section id="products" className="mx-auto max-w-6xl px-5 py-14">
-            <h2 className="mb-8 font-display text-3xl">All products</h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+          <section id="products" className="mx-auto max-w-6xl scroll-mt-28 px-6 py-28 md:px-10 md:py-36">
+            <div className="max-w-lg">
+              <h2 className="font-display text-4xl leading-tight">All products</h2>
+              <p className="mt-4 text-muted-foreground">Eight things we like, and nothing we don't.</p>
+            </div>
+            <div className="mt-20 grid grid-cols-1 gap-x-10 gap-y-20 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((p) => {
                 const inCart = cart[p.id] ?? 0;
                 const left = p.stock - inCart;
                 return (
-                  <article key={p.id} className="group overflow-hidden rounded-2xl border bg-card">
-                    <div className="aspect-square overflow-hidden bg-muted">
-                      <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                  <article key={p.id} className="group">
+                    <div className="relative aspect-4/5 overflow-hidden rounded-3xl bg-muted">
+                      <img src={p.image} alt={p.name} loading="lazy" className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-[1.04]" />
                     </div>
-                    <div className="space-y-2 p-4">
-                      <div className="flex items-start justify-between gap-2">
-                        <h3 className="font-medium">{p.name}</h3>
-                        <span className="font-semibold">{money(p.price)}</span>
+                    <div className="mt-7">
+                      <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{p.category}</p>
+                      <div className="mt-3 flex items-baseline justify-between gap-4">
+                        <h3 className="font-display text-2xl leading-snug">{p.name}</h3>
+                        <span className="shrink-0 text-lg font-medium">{money(p.price)}</span>
                       </div>
-                      <StatusBadge stock={p.stock} />
+                      <p className={`mt-2 text-sm ${p.stock === 0 ? "text-destructive" : p.stock < 5 ? "text-warning-foreground" : "text-muted-foreground"}`}>
+                        {stockLine(p.stock)}
+                      </p>
                       <button disabled={left <= 0} onClick={() => { setQty(p.id, inCart + 1); setOpen(true); }}
-                        className="mt-2 w-full rounded-full bg-primary py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground">
+                        className="mt-6 w-full rounded-full border border-primary/35 py-3.5 text-sm font-medium text-primary transition hover:bg-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:hover:bg-muted">
                         {p.stock === 0 ? "Sold out" : left <= 0 ? "Max in cart" : "Add to cart"}
                       </button>
                     </div>
@@ -135,33 +149,38 @@ function App() {
         <Admin products={products} setProducts={setProducts} />
       )}
 
-      {open && <div className="fixed inset-0 z-40 bg-foreground/30" onClick={() => setOpen(false)} />}
-      <aside className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-card shadow-2xl transition-transform ${open ? "translate-x-0" : "translate-x-full"}`}>
-        <div className="flex items-center justify-between border-b p-5">
+      <footer className="border-t border-border/70 py-20 text-center">
+        <p className="font-display text-xl">ShopEasy</p>
+        <p className="mt-3 text-sm text-muted-foreground">Made with care. No rush.</p>
+      </footer>
+
+      {open && <div className="fixed inset-0 z-40 bg-foreground/30 backdrop-blur-sm" onClick={() => setOpen(false)} />}
+      <aside className={`fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-card shadow-2xl transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}>
+        <div className="flex items-center justify-between border-b border-border/70 px-8 py-7">
           <h2 className="font-display text-2xl">Your cart</h2>
-          <button onClick={() => setOpen(false)} aria-label="Close cart"><X /></button>
+          <button onClick={() => setOpen(false)} aria-label="Close cart" className="rounded-full p-2 transition hover:bg-muted"><X /></button>
         </div>
-        <div className="flex-1 space-y-4 overflow-y-auto p-5">
+        <div className="flex-1 space-y-8 overflow-y-auto px-8 py-8">
           {items.length === 0 && <p className="text-muted-foreground">Your cart is empty.</p>}
           {items.map(({ p, q }) => (
-            <div key={p.id} className="flex gap-3">
-              <img src={p.image} alt={p.name} className="h-16 w-16 rounded-lg object-cover" />
+            <div key={p.id} className="flex gap-5">
+              <img src={p.image} alt={p.name} className="h-24 w-24 shrink-0 rounded-2xl object-cover" />
               <div className="flex-1">
-                <div className="flex justify-between text-sm font-medium"><span>{p.name}</span><span>{money(p.price * q)}</span></div>
-                <div className="mt-2 flex items-center gap-2">
-                  <button className="rounded-full border p-1" onClick={() => setQty(p.id, q - 1)}><Minus size={14} /></button>
+                <div className="flex justify-between gap-3 text-sm font-medium"><span>{p.name}</span><span>{money(p.price * q)}</span></div>
+                <div className="mt-4 flex items-center gap-3">
+                  <button className="rounded-full border p-1.5 transition hover:bg-muted" onClick={() => setQty(p.id, q - 1)}><Minus size={14} /></button>
                   <span className="w-6 text-center text-sm">{q}</span>
-                  <button className="rounded-full border p-1 disabled:opacity-40" disabled={q >= p.stock} onClick={() => setQty(p.id, q + 1)}><Plus size={14} /></button>
-                  <button className="ml-auto text-xs text-muted-foreground underline" onClick={() => setQty(p.id, 0)}>Remove</button>
+                  <button className="rounded-full border p-1.5 transition hover:bg-muted disabled:opacity-40" disabled={q >= p.stock} onClick={() => setQty(p.id, q + 1)}><Plus size={14} /></button>
+                  <button className="ml-auto text-xs text-muted-foreground underline underline-offset-4" onClick={() => setQty(p.id, 0)}>Remove</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
-        <div className="border-t p-5">
-          <div className="mb-4 flex justify-between font-semibold"><span>Total</span><span>{money(total)}</span></div>
+        <div className="border-t border-border/70 px-8 py-8">
+          <div className="mb-6 flex justify-between text-lg font-semibold"><span>Total</span><span>{money(total)}</span></div>
           <button disabled={!items.length} onClick={() => { checkout(); setOpen(false); }}
-            className="w-full rounded-full bg-primary py-3 font-medium text-primary-foreground disabled:opacity-40">Checkout</button>
+            className="w-full rounded-full bg-primary py-4 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-40">Checkout</button>
         </div>
       </aside>
     </div>
@@ -170,7 +189,7 @@ function App() {
 
 function StatusBadge({ stock }: { stock: number }) {
   const cls = stock === 0 ? "bg-destructive/10 text-destructive" : stock < 5 ? "bg-warning/15 text-warning-foreground" : "bg-success/15 text-success";
-  return <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>{status(stock)}{stock > 0 && ` · ${stock} left`}</span>;
+  return <span className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${cls}`}>{status(stock)}{stock > 0 && ` · ${stock} left`}</span>;
 }
 
 const empty = { name: "", category: "", price: "", stock: "", image: "" };
@@ -192,50 +211,50 @@ function Admin({ products, setProducts }: { products: Product[]; setProducts: (f
     setProducts((ps) => editing ? ps.map((p) => (p.id === editing ? { ...p, ...data } : p)) : [...ps, { id: Math.max(0, ...ps.map((p) => p.id)) + 1, ...data }]);
     setShow(false);
   };
-  const input = "w-full rounded-lg border bg-background px-3 py-2 text-sm";
+  const input = "w-full rounded-xl border bg-background px-4 py-3 text-sm";
 
   return (
-    <main className="mx-auto max-w-6xl px-5 py-12">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <main className="mx-auto max-w-6xl px-6 py-28 md:px-10 md:py-32">
+      <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="font-display text-4xl">Inventory</h1>
-          <p className="text-sm text-muted-foreground">{products.length} products · {products.filter((p) => p.stock < 5).length} low on stock</p>
+          <h1 className="font-display text-5xl">Inventory</h1>
+          <p className="mt-4 text-sm text-muted-foreground">{products.length} products · {products.filter((p) => p.stock < 5).length} low on stock</p>
         </div>
-        <button onClick={() => start()} className="flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground"><Plus size={16} />Add product</button>
+        <button onClick={() => start()} className="flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"><Plus size={16} />Add product</button>
       </div>
 
       {show && (
-        <form onSubmit={save} className="mb-6 grid gap-3 rounded-2xl border bg-card p-5 md:grid-cols-6">
+        <form onSubmit={save} className="mb-12 grid gap-4 rounded-3xl border bg-card p-8 md:grid-cols-6">
           <input className={`${input} md:col-span-2`} placeholder="Name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input className={input} placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
           <input className={input} type="number" step="0.01" min="0" placeholder="Price" required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <input className={input} type="number" min="0" placeholder="Stock" required value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} />
           <input className={input} placeholder="Image URL (optional)" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
-          <div className="flex gap-2 md:col-span-6">
-            <button className="rounded-full bg-primary px-5 py-2 text-sm text-primary-foreground">{editing ? "Save changes" : "Add product"}</button>
-            <button type="button" onClick={() => setShow(false)} className="rounded-full border px-5 py-2 text-sm">Cancel</button>
+          <div className="flex gap-3 md:col-span-6">
+            <button className="rounded-full bg-primary px-7 py-3 text-sm text-primary-foreground transition hover:opacity-90">{editing ? "Save changes" : "Add product"}</button>
+            <button type="button" onClick={() => setShow(false)} className="rounded-full border px-7 py-3 text-sm transition hover:bg-muted">Cancel</button>
           </div>
         </form>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border bg-card">
+      <div className="overflow-x-auto rounded-3xl border bg-card">
         <table className="w-full text-left text-sm">
-          <thead className="bg-muted text-xs uppercase tracking-wide text-muted-foreground">
-            <tr>{["ID", "Name", "Category", "Price", "Stock", "Status", ""].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
+          <thead className="bg-muted text-xs uppercase tracking-[0.15em] text-muted-foreground">
+            <tr>{["ID", "Name", "Category", "Price", "Stock", "Status", ""].map((h) => <th key={h} className="px-6 py-5 font-medium">{h}</th>)}</tr>
           </thead>
           <tbody>
             {products.map((p) => (
               <tr key={p.id} className={`border-t ${p.stock < 5 ? "bg-warning/10" : ""}`}>
-                <td className="px-4 py-3 text-muted-foreground">#{p.id}</td>
-                <td className="px-4 py-3 font-medium">{p.name}</td>
-                <td className="px-4 py-3">{p.category}</td>
-                <td className="px-4 py-3">{money(p.price)}</td>
-                <td className={`px-4 py-3 ${p.stock < 5 ? "font-semibold text-destructive" : ""}`}>{p.stock}</td>
-                <td className="px-4 py-3"><StatusBadge stock={p.stock} /></td>
-                <td className="px-4 py-3">
+                <td className="px-6 py-5 text-muted-foreground">#{p.id}</td>
+                <td className="px-6 py-5 font-medium">{p.name}</td>
+                <td className="px-6 py-5">{p.category}</td>
+                <td className="px-6 py-5">{money(p.price)}</td>
+                <td className={`px-6 py-5 ${p.stock < 5 ? "font-semibold text-destructive" : ""}`}>{p.stock}</td>
+                <td className="px-6 py-5"><StatusBadge stock={p.stock} /></td>
+                <td className="px-6 py-5">
                   <div className="flex justify-end gap-1">
-                    <button aria-label="Edit" onClick={() => start(p)} className="rounded-lg p-2 hover:bg-muted"><Pencil size={15} /></button>
-                    <button aria-label="Delete" onClick={() => confirm(`Delete ${p.name}?`) && setProducts((ps) => ps.filter((x) => x.id !== p.id))} className="rounded-lg p-2 text-destructive hover:bg-destructive/10"><Trash2 size={15} /></button>
+                    <button aria-label="Edit" onClick={() => start(p)} className="rounded-xl p-2.5 transition hover:bg-muted"><Pencil size={15} /></button>
+                    <button aria-label="Delete" onClick={() => confirm(`Delete ${p.name}?`) && setProducts((ps) => ps.filter((x) => x.id !== p.id))} className="rounded-xl p-2.5 text-destructive transition hover:bg-destructive/10"><Trash2 size={15} /></button>
                   </div>
                 </td>
               </tr>
