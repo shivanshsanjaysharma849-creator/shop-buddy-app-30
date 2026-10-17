@@ -22,14 +22,14 @@ export const Route = createFileRoute("/")({
 type Product = { id: number; name: string; category: string; price: number; stock: number; image: string };
 const u = (id: string) => `https://images.unsplash.com/${id}?w=600&q=70&auto=format&fit=crop`;
 const SEED: Product[] = [
-  { id: 1, name: "Stoneware Mug", category: "Home", price: 18, stock: 24, image: u("photo-1514228742587-6b1558fcca3d") },
-  { id: 2, name: "Leather Wallet", category: "Accessories", price: 45, stock: 3, image: u("photo-1627123424574-724758594e93") },
-  { id: 3, name: "Wireless Headphones", category: "Electronics", price: 129, stock: 12, image: u("photo-1505740420928-5e560c06d30e") },
-  { id: 4, name: "Potted Pothos", category: "Home", price: 22, stock: 8, image: u("photo-1485955900006-10f4d324d411") },
-  { id: 5, name: "Canvas Tote", category: "Accessories", price: 28, stock: 4, image: u("photo-1544816155-12df9643f363") },
-  { id: 6, name: "Analog Watch", category: "Accessories", price: 160, stock: 6, image: u("photo-1524592094714-0f0654e20314") },
-  { id: 7, name: "Scented Candle", category: "Home", price: 16, stock: 30, image: u("photo-1602874801007-bd458bb1b8b6") },
-  { id: 8, name: "Bluetooth Speaker", category: "Electronics", price: 79, stock: 0, image: u("photo-1608043152269-423dbba4e7e1") },
+  { id: 1, name: "Stoneware Mug", category: "Home", price: 499, stock: 24, image: u("photo-1514228742587-6b1558fcca3d") },
+  { id: 2, name: "Leather Wallet", category: "Accessories", price: 1499, stock: 3, image: u("photo-1627123424574-724758594e93") },
+  { id: 3, name: "Wireless Headphones", category: "Electronics", price: 3499, stock: 12, image: u("photo-1505740420928-5e560c06d30e") },
+  { id: 4, name: "Potted Pothos", category: "Home", price: 349, stock: 8, image: u("photo-1485955900006-10f4d324d411") },
+  { id: 5, name: "Canvas Tote", category: "Accessories", price: 799, stock: 4, image: u("photo-1544816155-12df9643f363") },
+  { id: 6, name: "Analog Watch", category: "Accessories", price: 2999, stock: 6, image: u("photo-1524592094714-0f0654e20314") },
+  { id: 7, name: "Scented Candle", category: "Home", price: 649, stock: 30, image: u("photo-1602874801007-bd458bb1b8b6") },
+  { id: 8, name: "Bluetooth Speaker", category: "Electronics", price: 1999, stock: 0, image: u("photo-1608043152269-423dbba4e7e1") },
 ];
 
 function useStored<T>(key: string, init: T) {
