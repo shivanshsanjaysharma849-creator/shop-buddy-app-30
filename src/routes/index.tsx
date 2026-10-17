@@ -53,7 +53,7 @@ function App() {
   const [msg, setMsg] = useState("");
 
   const count = Object.values(cart).reduce((a, b) => a + b, 0);
-  const items = products.filter((p) => cart[p.id]).map((p) => ({ p, q: cart[p.id] }));
+  const items = products.filter((p) => cart[p.id]).map((p) => ({ p, q: cart[p.id] ?? 0 }));
   const total = items.reduce((a, { p, q }) => a + p.price * q, 0);
 
   const setQty = (id: number, q: number) => {
@@ -63,7 +63,7 @@ function App() {
     setCart((c) => { const n = { ...c }; if (next) n[id] = next; else delete n[id]; return n; });
   };
   const checkout = () => {
-    setProducts((ps) => ps.map((p) => (cart[p.id] ? { ...p, stock: p.stock - cart[p.id] } : p)));
+    setProducts((ps) => ps.map((p) => (cart[p.id] ? { ...p, stock: p.stock - (cart[p.id] ?? 0) } : p)));
     setCart({});
     setMsg("Order placed! Thanks for shopping.");
     setTimeout(() => setMsg(""), 3000);
