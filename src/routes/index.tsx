@@ -44,7 +44,8 @@ function useStored<T>(key: string, init: T) {
   return [v, setV] as const;
 }
 
-const money = (n: number) => `$${n.toFixed(2)}`;
+const inr = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", minimumFractionDigits: 2 });
+const money = (n: number) => inr.format(n);
 const status = (s: number) => (s === 0 ? "Out of stock" : s < 5 ? "Low stock" : "In stock");
 const stockLine = (s: number) => (s === 0 ? "Sold out" : s < 5 ? `Only ${s} left` : `${s} in stock`);
 
