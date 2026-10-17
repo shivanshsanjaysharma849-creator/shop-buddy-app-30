@@ -50,7 +50,7 @@ const status = (s: number) => (s === 0 ? "Out of stock" : s < 5 ? "Low stock" : 
 const stockLine = (s: number) => (s === 0 ? "Sold out" : s < 5 ? `Only ${s} left` : `${s} in stock`);
 
 function App() {
-  const [products, setProducts] = useStored<Product[]>("se-products", SEED);
+  const [products, setProducts] = useStored<Product[]>("se-products-v2", SEED);
   const [cart, setCart] = useStored<Record<number, number>>("se-cart", {});
   const [tab, setTab] = useState<"shop" | "admin">("shop");
   const [open, setOpen] = useState(false);
@@ -228,7 +228,7 @@ function Admin({ products, setProducts }: { products: Product[]; setProducts: (f
         <form onSubmit={save} className="mb-12 grid gap-4 rounded-3xl border bg-card p-8 md:grid-cols-6">
           <input className={`${input} md:col-span-2`} placeholder="Name" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input className={input} placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-          <input className={input} type="number" step="0.01" min="0" placeholder="Price" required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+          <input className={input} type="number" step="0.01" min="0" placeholder="Price in ₹" required value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <input className={input} type="number" min="0" placeholder="Stock" required value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} />
           <input className={input} placeholder="Image URL (optional)" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
           <div className="flex gap-3 md:col-span-6">
